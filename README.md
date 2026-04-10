@@ -5,10 +5,6 @@ Raven b++ is a pvp and utility mod for minecraft 1.8.x. It supports Forge and Fe
 
 This edition extends off the legacy version with new features added with Ai. Specifically Claude Opus 4.6. I do not claim credit for any of the new features or the legacy build from the orginal versions of raven.<br>
 
-Offical Discord of Raven b++:
-[https://discord.gg/UqJ8ngteud](https://discord.gg/UqJ8ngteud)
-
-
 # Installation & Download
  - Download the latest version [here](https://github.com/JasonWangFTW/Opus-Edition---Raven/releases/latest)
  - Download essentials [here](https://cdn.essential.gg/mods/60ecf53d6b26c76a26d49e5b/62c746c961a27f691be98531/Essential-forge_1-8-9.jar)
