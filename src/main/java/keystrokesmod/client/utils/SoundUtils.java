@@ -14,7 +14,7 @@ public class SoundUtils {
     public static void playSound(String name) {
         try {
             clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(SoundUtils.class.getResource("/assets/keystrokesmod/sounds/" + name + ".wav")));
+            clip.open(AudioSystem.getAudioInputStream(SoundUtils.class.getResource("/assets/raindots/sounds/" + name + ".wav")));
             clip.start();
         } catch (Exception e) {
             System.out.println("Error with playing sound.");

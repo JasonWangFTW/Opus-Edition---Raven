@@ -9,10 +9,10 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class VersionManager {
-	private final String versionFilePath = "/assets/keystrokesmod/version";
-	private final String branchFilePath = "/assets/keystrokesmod/branch";
-    private final String versionUrl = "https://raw.githubusercontent.com/K-ov/Raven-bPLUS/stable/src/main/resources/assets/keystrokesmod/version";
-    private final String branchUrl = "https://raw.githubusercontent.com/K-ov/Raven-bPLUS/stable/src/main/resources/assets/keystrokesmod/branch";
+	private final String versionFilePath = "/assets/raindots/version";
+	private final String branchFilePath = "/assets/raindots/branch";
+    private final String versionUrl = "https://raw.githubusercontent.com/K-ov/Raven-bPLUS/stable/src/main/resources/assets/raindots/version";
+    private final String branchUrl = "https://raw.githubusercontent.com/K-ov/Raven-bPLUS/stable/src/main/resources/assets/raindots/branch";
 
     private Version latestVersion;
     private Version clientVersion;

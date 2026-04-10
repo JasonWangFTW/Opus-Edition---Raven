@@ -14,7 +14,7 @@ import keystrokesmod.client.event.impl.MoveInputEvent;
 import keystrokesmod.client.event.impl.PacketEvent;
 import keystrokesmod.client.event.impl.UpdateEvent;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.world.AntiBot;
+import keystrokesmod.client.module.modules.other.AntiBot;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
 import keystrokesmod.client.module.setting.impl.DescriptionSetting;
 import keystrokesmod.client.module.setting.impl.DoubleSliderSetting;

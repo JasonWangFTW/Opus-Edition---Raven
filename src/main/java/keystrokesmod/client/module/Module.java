@@ -64,6 +64,10 @@ public class Module {
         return (E) this;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
     public JsonObject getConfigAsJson() {
         JsonObject settings = new JsonObject();
 
@@ -121,7 +125,7 @@ public class Module {
     }
 
     public void enable() {
-        if(!canBeEnabled())
+        if (!canBeEnabled())
             return;
         this.enabled = true;
         this.onEnable();
@@ -133,7 +137,7 @@ public class Module {
     }
 
     public void disable() {
-        if(!canBeEnabled())
+        if (!canBeEnabled())
             return;
         this.enabled = false;
         if (registered) {
@@ -145,7 +149,7 @@ public class Module {
     }
 
     public void setToggled(boolean enabled) {
-        if(!canBeEnabled())
+        if (!canBeEnabled())
             return;
         if (enabled)
             enable();
@@ -250,7 +254,7 @@ public class Module {
     }
 
     public void unRegister() {
-        if(registered) {
+        if (registered) {
             registered = false;
             Raven.eventBus.unregister(this);
             onDisable();
@@ -262,14 +266,10 @@ public class Module {
         combat(false, category, "Combat"),
         movement(false, category, "Movement"),
         player(false, category, "Player"),
-        world(false, category, "World"),
         render(false, category, "Render"),
-        minigames(false, category, "Minigames"),
         other(false, category, "Other"),
         client(false, category, "Client"),
-        hotkey(false, category, "Hotkey"),
-        config(false, client, "Config"),
-        sumo(false, minigames, "Sumo");
+        config(false, client, "Config");
 
         private final boolean defaultShown;
         private final ModuleCategory topCategory;
@@ -277,7 +277,7 @@ public class Module {
         private List<ModuleCategory> childCategories = new ArrayList<ModuleCategory>();
 
         ModuleCategory(boolean defaultShown, ModuleCategory topCategory, String name) {
-            if(topCategory != null)
+            if (topCategory != null)
                 topCategory.addChildCategory(this);
             this.defaultShown = defaultShown;
             this.topCategory = topCategory;

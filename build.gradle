@@ -5,7 +5,7 @@ buildscript {
         jcenter()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net/"
         }
         maven {
             url 'https://repo.spongepowered.org/maven'
@@ -48,7 +48,7 @@ mixin {
     // Sets the main sourceSets refmap name instead of add sourceSets.main so there is no conflict cause of it adding another value instead of setting the 1 value.
     sourceSets {
         main {
-            ext.refMap = 'mixins.keystrokesmod.refmap.json'
+            ext.refMap = 'mixins.raindots.refmap.json'
         }
     }
 }
@@ -125,7 +125,7 @@ jar {
     }
     manifest {
         attributes(
-                'MixinConfigs': 'mixins.keystrokesmod.json',
+                'MixinConfigs': 'mixins.raindots.json',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
                 'TweakOrder': 0,
                 "FMLCorePlugin": "keystrokesmod.client.mixin.MixinLoader",
@@ -140,7 +140,7 @@ jar {
 shadowJar {
     manifest {
         attributes(
-                'MixinConfigs': 'mixins.keystrokesmod.json',
+                'MixinConfigs': 'mixins.raindots.json',
                 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
                 'TweakOrder': 0,
                 "FMLCorePlugin": "keystrokesmod.client.mixin.Mixinloader",

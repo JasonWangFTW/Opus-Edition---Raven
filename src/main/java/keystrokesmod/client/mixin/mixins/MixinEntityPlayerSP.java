@@ -12,7 +12,6 @@ import keystrokesmod.client.event.impl.TickEvent;
 import keystrokesmod.client.event.impl.UpdateEvent;
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.movement.NoSlow;
 import keystrokesmod.client.module.modules.movement.Sprint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -228,7 +227,6 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         if (this.timeUntilPortal > 0)
 			--this.timeUntilPortal;
 
-        Module noSlow = Raven.moduleManager.getModuleByClazz(NoSlow.class);
         Module sprint = Raven.moduleManager.getModuleByClazz(Sprint.class);
 
         boolean flag = this.movementInput.jump;
@@ -237,18 +235,10 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         boolean flag2 = this.movementInput.moveForward >= f;
         this.movementInput.updatePlayerMoveState();
         if (this.isUsingItem() && !this.isRiding()) {
-
             MovementInput var10000 = this.movementInput;
-
-            if (noSlow.isEnabled()) {
-                float slowdown = (float) ((100 - NoSlow.b.getInput()) / 100F);
-                var10000.moveStrafe *= slowdown;
-                var10000.moveForward *= slowdown;
-            } else {
-                var10000.moveStrafe *= 0.2F;
-                var10000.moveForward *= 0.2F;
-                this.sprintToggleTimer = 0;
-            }
+            var10000.moveStrafe *= 0.2F;
+            var10000.moveForward *= 0.2F;
+            this.sprintToggleTimer = 0;
         }
 
         this.pushOutOfBlocks(this.posX - ((double) this.width * 0.35D), this.getEntityBoundingBox().minY + 0.5D,
@@ -263,7 +253,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         if (this.onGround && !flag1 && !flag2
                 && ((this.movementInput.moveForward >= f) || (sprint.isEnabled() && Sprint.multiDir.isToggled()
                         && ((movementInput.moveForward != 0) || (movementInput.moveStrafe != 0))))
-                && !this.isSprinting() && flag3 && (!this.isUsingItem() || noSlow.isEnabled())
+                && !this.isSprinting() && flag3 && !this.isUsingItem()
                 && (!this.isPotionActive(Potion.blindness)
                         || (sprint.isEnabled() && Sprint.ignoreBlindness.isToggled())))
 			if ((this.sprintToggleTimer <= 0) && !this.mc.gameSettings.keyBindSprint.isKeyDown())
@@ -274,7 +264,7 @@ public abstract class MixinEntityPlayerSP extends AbstractClientPlayer {
         if (!this.isSprinting()
                 && ((this.movementInput.moveForward >= f) || (sprint.isEnabled() && Sprint.multiDir.isToggled()
                         && ((movementInput.moveForward != 0) || (movementInput.moveStrafe != 0))))
-                && flag3 && (!this.isUsingItem() || noSlow.isEnabled())
+                && flag3 && !this.isUsingItem()
                 && (!this.isPotionActive(Potion.blindness)
                         || (sprint.isEnabled() && Sprint.ignoreBlindness.isToggled()))
                 && this.mc.gameSettings.keyBindSprint.isKeyDown())

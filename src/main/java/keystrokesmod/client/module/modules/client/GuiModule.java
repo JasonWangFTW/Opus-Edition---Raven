@@ -5,6 +5,7 @@ import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
 import keystrokesmod.client.module.setting.Setting;
 import keystrokesmod.client.module.setting.impl.ComboSetting;
+import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.ColorM;
 import keystrokesmod.client.utils.Utils;
@@ -12,20 +13,22 @@ import keystrokesmod.client.utils.Utils;
 public class GuiModule extends Module {
 
     private static ComboSetting preset;
+    private static TickSetting cleanUp, notifications;
 
-    private static TickSetting cleanUp, reset, betagui, rainbowNotification, notifications;
-
+    public static SliderSetting arraylistScale;
+    public static SliderSetting arraylistColor;
+    public static TickSetting arraylistBackground;
     public static int guiScale;
 
     public GuiModule() {
         super("Gui", ModuleCategory.client);
         withKeycode(54);
 
-        this.registerSetting(betagui = new TickSetting("beta gui (VERY BETA)", false));
         this.registerSetting(cleanUp = new TickSetting("Clean Up", false));
-        this.registerSetting(reset = new TickSetting("Reset position", false));
         this.registerSetting(notifications = new TickSetting("Notifications", false));
-        this.registerSetting(rainbowNotification = new TickSetting("Reset position", false));
+        this.registerSetting(arraylistScale = new SliderSetting("Arraylist Scale", 1.0, 0.5, 2.0, 0.1));
+        this.registerSetting(arraylistColor = new SliderSetting("Arraylist Color", 0.0, 0.0, 360.0, 1.0));
+        this.registerSetting(arraylistBackground = new TickSetting("Arraylist Background", true));
         this.registerSetting(preset = new ComboSetting("Preset", Preset.PlusPlus));
     }
 
@@ -35,28 +38,17 @@ public class GuiModule extends Module {
             cleanUp.disable();
             for (CategoryComponent cc : Raven.clickGui.getCategoryList())
                 cc.setCoords(((cc.getX() / 50) * 50) + ((cc.getX() % 50) > 25 ? 50 : 0), ((cc.getY() / 50) * 50) + ((cc.getY() % 50) > 25 ? 50 : 0));
-        } else if (setting == reset) {
-            reset.disable();
-            Raven.clickGui.resetSort();
         }
-
     }
 
     @Override
     public void onEnable() {
-        if (Utils.Player.isPlayerInGame() && ((mc.currentScreen != Raven.clickGui) || (mc.currentScreen != Raven.kvCompactGui)))
-            if(betagui.isToggled()) {
-                guiScale = mc.gameSettings.guiScale;
-                mc.gameSettings.guiScale = 3;
-                mc.displayGuiScreen(Raven.kvCompactGui);
-                Raven.kvCompactGui.initGui();
-                Raven.kvCompactGui.initGui(); //no idea why this works
-            }
-            else {
-                mc.displayGuiScreen(Raven.clickGui);
-                Raven.clickGui.initMain();
-            }
-
+        if (Utils.Player.isPlayerInGame() && mc.currentScreen != Raven.appleGui) {
+            guiScale = mc.gameSettings.guiScale;
+            mc.gameSettings.guiScale = 3;
+            mc.displayGuiScreen(Raven.appleGui);
+            Raven.appleGui.initGui();
+        }
         this.disable();
     }
 
@@ -202,10 +194,6 @@ public class GuiModule extends Module {
 
     public static boolean isBoarderToggled() {
         return  getPresetMode().boarder;
-    }
-
-    public static boolean rainbowNotification() {
-        return rainbowNotification.isToggled();
     }
 
     public static boolean notifications() {

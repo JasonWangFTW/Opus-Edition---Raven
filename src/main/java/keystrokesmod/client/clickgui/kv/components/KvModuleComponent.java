@@ -21,7 +21,7 @@ public class KvModuleComponent extends KvComponent{
 
     private Module module;
 
-    private final static ResourceLocation settingIcon = RenderUtils.getResourcePath("/assets/keystrokesmod/kvclickgui/gear.png");;
+    private final static ResourceLocation settingIcon = RenderUtils.getResourcePath("/assets/raindots/kvclickgui/gear.png");;
     private ResourceLocation moduleIcon;
     private int toggleX, toggleY, toggleWidth, toggleHeight,
     			settingX, settingY, settingWidth, settingHeight,
@@ -36,7 +36,7 @@ public class KvModuleComponent extends KvComponent{
     public KvModuleComponent(Module module) {
         this.module = module;
         bindComponent = new KvBindComponent(module);
-        moduleIcon = RenderUtils.getResourcePath("/assets/keystrokesmod/kvclickgui/" + module.moduleCategory().getName() + "/" + module.getName().toLowerCase() + ".png");
+        moduleIcon = RenderUtils.getResourcePath("/assets/raindots/kvclickgui/" + module.moduleCategory().getName() + "/" + module.getName().toLowerCase() + ".png");
         for(Setting setting : module.getSettings())
 			try {
 				Class<? extends KvComponent> clazz = setting.getComponentType();

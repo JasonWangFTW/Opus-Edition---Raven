@@ -1,7 +1,7 @@
 [
     {
-        "modid": "keystrokesmod",
-        "name": "KeystrokesMod",
+        "modid": "raindots",
+        "name": "Raindots Edition",
         "description": "Shows your keystrokes ingame. | Updated and modified by spiderfrog | V5 by Yario & Extazz | Ported by OFP.",
         "version": "KMV5",
         "url": "https://www.youtube.com/ofpmedia",
@@ -13,7 +13,7 @@
             "Yario & Extazz"
         ],
         "credits": "OFP, Fyu, spiderfrog, Yario & Extazz",
-        "logoFile": "",
+        "logoFile": "logo.png",
         "screenshots": [],
         "dependencies": []
     }

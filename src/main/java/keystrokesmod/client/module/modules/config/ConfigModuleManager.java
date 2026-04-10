@@ -5,7 +5,6 @@ import java.util.List;
 
 import keystrokesmod.client.config.Config;
 import keystrokesmod.client.main.Raven;
-import keystrokesmod.client.module.Module.ModuleCategory;
 
 public class ConfigModuleManager {
 
@@ -27,7 +26,6 @@ public class ConfigModuleManager {
         } catch (NullPointerException omgwoawsocoolandedgy) {
             omgwoawsocoolandedgy.printStackTrace();
         }
-        Raven.clickGui.getCategoryComponent(ModuleCategory.config).updateModules();
     }
 
     public List<ConfigModule> getConfigModules() {

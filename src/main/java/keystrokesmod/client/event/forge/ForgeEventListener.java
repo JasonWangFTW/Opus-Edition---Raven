@@ -1,5 +1,6 @@
 package keystrokesmod.client.event.forge;
 
+import keystrokesmod.client.clickgui.apple.AppleClickGui;
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.event.impl.ForgeEvent;
 import keystrokesmod.client.event.impl.Render2DEvent;
@@ -36,7 +37,8 @@ public class ForgeEventListener {
             Raven.eventBus.post(new keystrokesmod.client.event.impl.TickEvent());
             if (Utils.Player.isPlayerInGame())
                 for (Module module : Raven.moduleManager.getModules())
-                    if (Minecraft.getMinecraft().currentScreen instanceof ClickGui)
+                    if (Minecraft.getMinecraft().currentScreen instanceof ClickGui
+                            || Minecraft.getMinecraft().currentScreen instanceof AppleClickGui)
                         module.guiUpdate();
         }
     }

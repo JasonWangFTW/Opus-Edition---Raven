@@ -1,6 +1,5 @@
 package keystrokesmod.client.main;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -8,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import com.google.common.eventbus.EventBus;
 
+import keystrokesmod.client.clickgui.apple.AppleClickGui;
 import keystrokesmod.client.clickgui.kv.KvCompactGui;
 import keystrokesmod.client.clickgui.raven.ClickGui;
 import keystrokesmod.client.command.CommandManager;
@@ -92,6 +92,7 @@ public class Raven {
 
     public static ClickGui clickGui;
     public static KvCompactGui kvCompactGui;
+    public static AppleClickGui appleGui;
     // public static TabGui tabGui;
 
     private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(2);
@@ -120,22 +121,17 @@ public class Raven {
 
         Runtime.getRuntime().addShutdownHook(new Thread(ex::shutdown));
 
-        mResourceLocation = RenderUtils.getResourcePath("/assets/keystrokesmod/raven.png");
+        mResourceLocation = RenderUtils.getResourcePath("/assets/raindots/raven.png");
 
         commandManager = new CommandManager();
         clickGui = new ClickGui();
         kvCompactGui = new KvCompactGui();
+        appleGui = new AppleClickGui();
         configManager = new ConfigManager();
         clientConfig = new ClientConfig();
         clientConfig.applyConfig();
 
-        ex.execute(() -> {
-            try {
-                LaunchTracker.registerLaunch();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+
     }
 
     @SuppressWarnings("unused")

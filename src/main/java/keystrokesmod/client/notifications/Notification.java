@@ -63,7 +63,7 @@ public class Notification {
         Color color = new Color(0, 0, 0, 220);
         Color color1;
 
-        if (GuiModule.rainbowNotification()) {
+        if (false) {
             color1 = new Color(Utils.Client.rainbowDraw(2L, 1200L));
         } else if (type == NotificationType.INFO)
             color1 = new Color(0, 26, 169);
@@ -97,7 +97,7 @@ public class Notification {
             int xEnd = xBegin + titleWidth;
             int yEnd = yBegin + 1;
             drawRect(xBegin, yBegin, xEnd, yEnd,
-                    (GuiModule.rainbowNotification() ? Utils.Client.rainbowDraw(2L, 1200L) : new Color(-1).getRGB()));
+                    (false ? Utils.Client.rainbowDraw(2L, 1200L) : new Color(-1).getRGB()));
             fontRenderer.drawString(messsage, (int) (scaledResolution.getScaledWidth() - offset + 8),
                     scaledResolution.getScaledHeight() - 33, -1);
         } else {
@@ -114,7 +114,7 @@ public class Notification {
             int xEnd = xBegin + titleWidth;
             int yEnd = yBegin + 1;
             drawRect(xBegin, yBegin, xEnd, yEnd,
-                    (GuiModule.rainbowNotification() ? Utils.Client.rainbowDraw(2L, 1200L) : new Color(-1).getRGB()));
+                    (false ? Utils.Client.rainbowDraw(2L, 1200L) : new Color(-1).getRGB()));
             fontRenderer.drawString(messsage, (int) (scaledResolution.getScaledWidth() - offset + 8),
                     scaledResolution.getScaledHeight() - 15, -1);
         }

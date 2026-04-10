@@ -1,7 +1,7 @@
 package keystrokesmod.client.utils;
 
 import keystrokesmod.client.main.Raven;
-import keystrokesmod.client.module.modules.world.AntiBot;
+import keystrokesmod.client.module.modules.other.AntiBot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.client.event.MouseEvent;

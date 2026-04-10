@@ -2,7 +2,6 @@ package keystrokesmod.client.module.modules;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -14,88 +13,45 @@ import com.google.common.eventbus.Subscribe;
 import keystrokesmod.client.event.impl.Render2DEvent;
 import keystrokesmod.client.main.Raven;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.client.FakeHud;
 import keystrokesmod.client.module.setting.Setting;
-import keystrokesmod.client.module.setting.impl.ComboSetting;
-import keystrokesmod.client.module.setting.impl.DescriptionSetting;
+import keystrokesmod.client.module.modules.client.GuiModule;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.module.setting.impl.TickSetting;
 import keystrokesmod.client.utils.RenderUtils;
 import keystrokesmod.client.utils.Utils;
 import keystrokesmod.client.utils.font.FontUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 public class HUD extends Module {
-    public static TickSetting editPosition, dropShadow, logo;
-    public static ComboSetting logoMode;
-    public static SliderSetting colourMode, logoScaleh, logoScalew;
-    public static DescriptionSetting colourModeDesc, logoDesc1, logoDesc2;
+    public static TickSetting editPosition, dropShadow;
     private static int hudX = 5;
     private static int hudY = 70;
-    private double logoHeight;
     public static boolean e;
-
-    private InputStream inputStream;
-    private ResourceLocation ravenLogo;
 
     public static Utils.HUD.PositionMode positionMode;
     public static boolean showedError;
     public static final String HUDX_prefix = "HUDX~ ";
     public static final String HUDY_prefix = "HUDY~ ";
 
-    public enum lmv {
-        l1, l2, l3, l4, l5, l6, l7, CD
-    }
-
     public HUD() {
         super("HUD", ModuleCategory.render);
         this.registerSetting(editPosition = new TickSetting("Edit position", false));
         this.registerSetting(dropShadow = new TickSetting("Drop shadow", true));
-        this.registerSetting(logo = new TickSetting("Logo", true));
-        this.registerSetting(colourMode = new SliderSetting("Value: ", 1, 1, 6, 1));
-        this.registerSetting(colourModeDesc = new DescriptionSetting("Mode: RAVEN"));
-        this.registerSetting(logoScaleh = new SliderSetting("Logo Scale height ", 1, 0, 10, 0.01));
-        this.registerSetting(logoScalew = new SliderSetting("Logo Scale width ", 2, 0, 10, 0.01));
-        this.registerSetting(logoMode = new ComboSetting("Logo Mode:", lmv.l7));
-        this.registerSetting(logoDesc1 = new DescriptionSetting("cd logomode put an image logo.png"));
-        this.registerSetting(logoDesc1 = new DescriptionSetting("in the keystrokes folder"));
         showedError = false;
         showInHud = false;
     }
 
-    private void setUpLogo() {
-        RenderUtils.getResourcePath("/assets/keystrokes/logohud/" + logoMode.getMode().toString() + ".png");
-    }
-
-    @Override
-	public void postApplyConfig() {
-        setUpLogo();
-    }
-
     @Override
 	public void guiButtonToggled(Setting b) {
-        if (b == logoMode)
-            setUpLogo();
-        else if (b == editPosition) {
+        if (b == editPosition) {
             editPosition.disable();
             mc.displayGuiScreen(new EditHudPositionScreen());
         }
-    }
-
-    public boolean logoLoaded() {
-        return (ravenLogo != null) && logo.isToggled();
-    }
-
-    @Override
-	public void guiUpdate() {
-        colourModeDesc.setDesc(Utils.md + ColourModes.values()[(int) colourMode.getInput() - 1]);
     }
 
     @Override
@@ -108,142 +64,85 @@ public class HUD extends Module {
         if (Utils.Player.isPlayerInGame()) {
             if ((mc.currentScreen != null) || mc.gameSettings.showDebugInfo)
 				return;
-            boolean fhe = Raven.moduleManager.getModuleByName("Fake Hud").isEnabled();
             if (!e) {
                 ScaledResolution sr = new ScaledResolution(mc);
                 positionMode = Utils.HUD.getPostitionMode(hudX, hudY, sr.getScaledWidth(), sr.getScaledHeight());
                 if ((positionMode == Utils.HUD.PositionMode.UPLEFT) || (positionMode == Utils.HUD.PositionMode.UPRIGHT)) {
-                    if (!fhe)
-						Raven.moduleManager.sortShortLong();
-					else
-						FakeHud.sortShortLong();
+                    Raven.moduleManager.sortShortLong();
                 } else if ((positionMode == Utils.HUD.PositionMode.DOWNLEFT)
-                        || (positionMode == Utils.HUD.PositionMode.DOWNRIGHT))
-					if (!fhe)
-						Raven.moduleManager.sortLongShort();
-					else
-						FakeHud.sortLongShort();
+                        || (positionMode == Utils.HUD.PositionMode.DOWNRIGHT)) {
+                    Raven.moduleManager.sortLongShort();
+                }
                 e = true;
             }
             int margin = 2;
             int y = hudY;
-            int del = 0;
 
-            List<Module> en = fhe ? FakeHud.getModules() : new ArrayList<>(Raven.moduleManager.getModules());
+            List<Module> en = new ArrayList<>(Raven.moduleManager.getModules());
             if (en.isEmpty())
                 return;
 
-            int textBoxWidth = Raven.moduleManager.getLongestActiveModule(mc.fontRendererObj);
-            int textBoxHeight = Raven.moduleManager.getBoxHeight(mc.fontRendererObj, margin);
+            float alScale = GuiModule.arraylistScale != null ? (float) GuiModule.arraylistScale.getInput() : 1f;
+            int fontLineH = (int) FontUtil.poppinsMedium.getHeight() + 3;
 
-            if (hudX < 0)
-				hudX = margin;
-            if (hudY < 0)
-				hudY = margin;
+            // Max unscaled module name width (for right-align and boundary checks)
+            int maxUnscaledW = 0;
+            for (Module m : en)
+                if (m.isEnabled() && m.showInHud() && m.moduleCategory() != Module.ModuleCategory.category)
+                    maxUnscaledW = Math.max(maxUnscaledW, (int) FontUtil.poppinsMedium.getStringWidth(m.getName()));
+
+            int textBoxWidth  = (int) (maxUnscaledW * alScale);
+            int textBoxHeight = 0;
+            for (Module m : en)
+                if (m.isEnabled() && m.showInHud() && m.moduleCategory() != Module.ModuleCategory.category)
+                    textBoxHeight += (int) (fontLineH * alScale);
+
+            if (hudX < 0) hudX = margin;
+            if (hudY < 0) hudY = margin;
 
             if ((hudX + textBoxWidth) > (mc.displayWidth / 2))
-				hudX = (mc.displayWidth / 2) - textBoxWidth - margin;
-
+                hudX = (mc.displayWidth / 2) - textBoxWidth - margin;
             if ((hudY + textBoxHeight) > (mc.displayHeight / 2))
-				hudY = (mc.displayHeight / 2) - textBoxHeight;
+                hudY = (mc.displayHeight / 2) - textBoxHeight;
 
-            drawLogo(textBoxWidth);
-            y += logoHeight;
+            boolean right = (positionMode == Utils.HUD.PositionMode.DOWNRIGHT)
+                    || (positionMode == Utils.HUD.PositionMode.UPRIGHT);
+
+            // Apply scale transform around HUD origin
+            GL11.glPushMatrix();
+            GL11.glTranslatef(hudX, hudY, 0);
+            GL11.glScalef(alScale, alScale, 1f);
+            GL11.glTranslatef(-hudX, -hudY, 0);
+
+            // Compute text color from HSB slider
+            float hue = GuiModule.arraylistColor != null ? (float) GuiModule.arraylistColor.getInput() : 0f;
+            int textColor;
+            if (hue > 0f) {
+                textColor = Color.HSBtoRGB(hue / 360f, 0.7f, 1.0f) | 0xFF000000;
+            } else {
+                textColor = 0xFFFFFFFF;
+            }
+            boolean showBg = GuiModule.arraylistBackground != null && GuiModule.arraylistBackground.isToggled();
+
+            int renderY = hudY;
             for (Module m : en)
-				if (m.isEnabled() && m.showInHud())
-					if ((positionMode == Utils.HUD.PositionMode.DOWNRIGHT)
-                            || (positionMode == Utils.HUD.PositionMode.UPRIGHT)) {
-                        if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
-                            mc.fontRendererObj.drawString(m.getName(),
-                                    (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())),
-                                    (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-                            y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                            del -= 120;
-                        } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN2) {
-                            mc.fontRendererObj.drawString(m.getName(),
-                                    (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())),
-                                    (float) y, Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-                            y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                            del -= 10;
-                        } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO) {
-                            mc.fontRendererObj.drawString(m.getName(),
-                                    (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())),
-                                    (float) y, Utils.Client.astolfoColorsDraw(10, 14), dropShadow.isToggled());
-                            y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                            del -= 120;
-                        } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO2) {
-                            mc.fontRendererObj.drawString(m.getName(),
-                                    (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())),
-                                    (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-                            y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                            del -= 120;
-                        } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO3) {
-                            mc.fontRendererObj.drawString(m.getName(),
-                                    (float) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())),
-                                    (float) y, Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-                            y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                            del -= 10;
-                        } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.KV) {
-                            FontUtil.two.drawString(m.getName(),
-                                    (double) hudX + (textBoxWidth - mc.fontRendererObj.getStringWidth(m.getName())), y,
-                                    Utils.Client.customDraw(del), dropShadow.isToggled(), 10);
-                            y += mc.fontRendererObj.FONT_HEIGHT + margin;
-                            del -= 10;
-                        }
-                    } else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN) {
-					    mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y,
-					            Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-					    y += mc.fontRendererObj.FONT_HEIGHT + margin;
-					    del -= 120;
-					} else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.RAVEN2) {
-					    mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y,
-					            Utils.Client.rainbowDraw(2L, del), dropShadow.isToggled());
-					    y += mc.fontRendererObj.FONT_HEIGHT + margin;
-					    del -= 10;
-					} else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO) {
-					    mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y,
-					            Utils.Client.astolfoColorsDraw(10, 14), dropShadow.isToggled());
-					    y += mc.fontRendererObj.FONT_HEIGHT + margin;
-					    del -= 120;
-					} else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO2) {
-					    mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y,
-					            Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-					    y += mc.fontRendererObj.FONT_HEIGHT + margin;
-					    del -= 120;
-					} else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.ASTOLFO3) {
-					    mc.fontRendererObj.drawString(m.getName(), (float) hudX, (float) y,
-					            Utils.Client.astolfoColorsDraw(10, del), dropShadow.isToggled());
-					    y += mc.fontRendererObj.FONT_HEIGHT + margin;
-					    del -= 10;
-					} else if (ColourModes.values()[(int) colourMode.getInput() - 1] == ColourModes.KV) {
-					    FontUtil.two.drawString(m.getName(), (float) hudX, (float) y, Utils.Client.customDraw(del));
-					    y += mc.fontRendererObj.FONT_HEIGHT - 2;
-					    del -= 10;
-					}
+                if (m.isEnabled() && m.showInHud() && m.moduleCategory() != Module.ModuleCategory.category) {
+                    float unscaledW = (float) FontUtil.poppinsMedium.getStringWidth(m.getName());
+                    float tx = right ? (float) hudX + (maxUnscaledW - unscaledW) : (float) hudX;
+                    if (showBg) {
+                        Gui.drawRect((int) tx - 1, renderY - 1,
+                                (int) tx + (int) unscaledW + 1, renderY + fontLineH - 2,
+                                0x4D000000);
+                    }
+                    // shadow at 0.5px offset, 70% black
+                    FontUtil.poppinsMedium.drawSmoothString(m.getName(), tx + 0.5f, renderY + 0.5f, 0xB3000000);
+                    FontUtil.poppinsMedium.drawSmoothString(m.getName(), tx, renderY, textColor);
+                    renderY += fontLineH;
+                }
+
+            GL11.glPopMatrix();
         }
 
-    }
-
-    private void drawLogo(int e) {
-
-        ScaledResolution sr = new ScaledResolution(mc);
-        logoHeight = (sr.getScaledHeight() * logoScaleh.getInput()) / 10;
-        if (logoLoaded()) {
-            if ((positionMode == Utils.HUD.PositionMode.DOWNRIGHT) || (positionMode == Utils.HUD.PositionMode.UPRIGHT)) {
-                double logoWidth = (sr.getScaledWidth() * logoScalew.getInput()) / 8;
-                Minecraft.getMinecraft().getTextureManager().bindTexture(ravenLogo);
-                GL11.glColor4f(1, 1, 1, 1);
-				Gui.drawModalRectWithCustomSizedTexture((int) ((hudX + e) - logoWidth), hudY, 0, 0, (int) logoWidth,
-						(int) logoHeight, (int) logoWidth, (int) logoHeight);
-            } else {
-                double logoWidth = (sr.getScaledWidth() * logoScalew.getInput()) / 8;
-                Minecraft.getMinecraft().getTextureManager().bindTexture(ravenLogo);
-                GL11.glColor4f(1, 1, 1, 1);
-                Gui.drawModalRectWithCustomSizedTexture(hudX, hudY, 0, 0, (int) logoWidth, (int) logoHeight,
-                        (int) logoWidth, (int) logoHeight);
-            }
-        } else
-			logoHeight = 0;
     }
 
     static class EditHudPositionScreen extends GuiScreen {
@@ -375,10 +274,6 @@ public class HUD extends Module {
 		public boolean doesGuiPauseGame() {
             return false;
         }
-    }
-
-    public enum ColourModes {
-        RAVEN, RAVEN2, ASTOLFO, ASTOLFO2, ASTOLFO3, KV
     }
 
     public static int getHudX() {

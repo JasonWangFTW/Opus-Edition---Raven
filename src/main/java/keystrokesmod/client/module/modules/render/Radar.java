@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe;
 
 import keystrokesmod.client.event.impl.Render2DEvent;
 import keystrokesmod.client.module.Module;
-import keystrokesmod.client.module.modules.world.AntiBot;
+import keystrokesmod.client.module.modules.other.AntiBot;
 import keystrokesmod.client.module.setting.impl.RGBSetting;
 import keystrokesmod.client.module.setting.impl.SliderSetting;
 import keystrokesmod.client.utils.RenderUtils;
@@ -30,18 +30,22 @@ public class Radar extends Module {
 
     @Subscribe
     public void render2D(Render2DEvent e) {
-        if(!Utils.Player.isPlayerInGame() || (mc.currentScreen != null))
+        if (!Utils.Player.isPlayerInGame() || (mc.currentScreen != null))
             return;
-        int centreX = x + (width/2), centreY = y + (height/2);
-        RenderUtils.drawBorderedRoundedRect(x, y, x + width, y + height, 5, 5, boarderColor.getRGB(), boxColor.getRGB());
-        for(Entity en : mc.theWorld.playerEntities) {
-        	if((en == mc.thePlayer) || AntiBot.bot(en)) continue;
+        int centreX = x + (width / 2), centreY = y + (height / 2);
+        RenderUtils.drawBorderedRoundedRect(x, y, x + width, y + height, 5, 5, boarderColor.getRGB(),
+                boxColor.getRGB());
+        for (Entity en : mc.theWorld.playerEntities) {
+            if ((en == mc.thePlayer) || AntiBot.bot(en))
+                continue;
             int radius = (int) mc.thePlayer.getDistanceToEntity(en);
-            if(radius > distance.getInput()) continue;
-            int theta = (int) Utils.Player.fovFromEntity(en) -180; //why do i need to put the 180 here huh
-            int 	enX = (int) ((radius * Math.sin(Math.toRadians(theta)))*((width/2)/distance.getInput())),
-            		enY = (int) ((radius * Math.cos(Math.toRadians(theta)))*((height/2)/distance.getInput()));
-            Gui.drawRect((centreX + enX) -1 , (centreY + enY) - 1 , centreX + enX + 1, centreY + enY + 1, playerColor.getRGB());
+            if (radius > distance.getInput())
+                continue;
+            int theta = (int) Utils.Player.fovFromEntity(en) - 180; // why do i need to put the 180 here huh
+            int enX = (int) ((radius * Math.sin(Math.toRadians(theta))) * ((width / 2) / distance.getInput())),
+                    enY = (int) ((radius * Math.cos(Math.toRadians(theta))) * ((height / 2) / distance.getInput()));
+            Gui.drawRect((centreX + enX) - 1, (centreY + enY) - 1, centreX + enX + 1, centreY + enY + 1,
+                    playerColor.getRGB());
         }
         Gui.drawRect(centreX - 1, centreY - 1, centreX + 1, centreY + 1, selfColor.getRGB());
     }
