@@ -8,7 +8,7 @@ Offical Discord of Raven b++:
 
 
 # Installation & Download
- - Download the latest version [here](https://github.com/K-ov/Raven/releases/download/v1.0.0/1.8.9.BetterKeystrokes.V-1.2.jar)
+ - Download the latest version [here](https://github.com/JasonWangFTW/Opus-Edition---Raven/releases/latest)
  - Download essentials [here](https://cdn.essential.gg/mods/60ecf53d6b26c76a26d49e5b/62c746c961a27f691be98531/Essential-forge_1-8-9.jar)
  - Download forge for 1.8.9 [here](https://maven.minecraftforge.net/net/minecraftforge/forge/1.8.9-11.15.1.2318-1.8.9/forge-1.8.9-11.15.1.2318-1.8.9-installer.jar)
  and run the installer.
@@ -19,7 +19,7 @@ Offical Discord of Raven b++:
 
 
 ## Download
-[Latest](https://github.com/K-ov/Raven/releases/download/v1.0.0/1.8.9.BetterKeystrokes.V-1.2.jar)
+[Latest](https://github.com/JasonWangFTW/Opus-Edition---Raven/releases/latest)
 
 
 ## How to build it yourself
